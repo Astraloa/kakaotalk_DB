@@ -1,6 +1,6 @@
 # KakaoTalk Database Bridge ✨
 >
-> Github : [URL](github.com/Astraloa/kakaotalk_database_bridge)
+> Github : [URL](https://github.com/Astraloa/kakaotalk_database_bridge)
 >
 > License : `Deep Dark License - Type B`
 >
