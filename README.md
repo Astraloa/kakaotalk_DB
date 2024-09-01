@@ -9,6 +9,9 @@
 > * [x] get userId by code
 > * [x] check change kakaotalk db
 > * [ ] convert database value
+> *  -> [x] create channel object
+> *  -> [ ] create user object
+> *  -> [ ] create chat object
 > * [ ] create kakaoTalk DB class
 > * [ ] create next/prev chat
 > * [x] sepreate data file
