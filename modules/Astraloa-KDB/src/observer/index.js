@@ -3,7 +3,7 @@ module.exports = /** @class */ (function () {
     /**
      * set observer
      * 
-     * callback - (event, path)
+     * callback - (event, path || null)
      * 
      * @param {string} file_path 
      * @param {function} callback 
@@ -12,8 +12,14 @@ module.exports = /** @class */ (function () {
     function Observer(file_path, callback) {
         this.path = file_path;
         this.callback = callback;
-        this.observer;
+        this.observer = new JavaAdapter(android.os.FileObserver, {
+            onEvent: this.callback
+        }, new java.io.File(this.path));
     }
+
+    Observer.toString = (function () {
+        return "[class Observer]";
+    }).bind({});
 
     /**
      * start watching
@@ -21,9 +27,7 @@ module.exports = /** @class */ (function () {
      */
 
     Observer.prototype.start = function () {
-        this.observer = new JavaAdapter(android.os.FileObserver, {
-            onEvent: this.callback
-        }, new java.io.File(this.path));
+        this.observer.startWatching();
 
         return true;
     }
@@ -44,7 +48,7 @@ module.exports = /** @class */ (function () {
      */
 
     Observer.prototype.toString = (function () {
-        return "[class Observer]";
+        return "[object Observer]";
     }).bind();
 
     return Observer;
