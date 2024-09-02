@@ -1,7 +1,7 @@
-let BigJSON = require("./../../BigJSON");
 let channelError = require("./../../error")("channelError");
+let AutoParse = require("../../AutoParse");
 let decrypt = require("./../../decrypt");
-var DB = require("../open");
+var DB = require("../Astraloa");
 
 function getChannel(chatId, botID) {
     let dbs = DB.getDBs();
@@ -12,47 +12,63 @@ function getChannel(chatId, botID) {
     let channel = {};
 
     if (channelCursor.moveToFirst()) {
-      try {
-        var columns = channelCursor.columnNames;
-        for (var i = 0; i < columns.length; i++) {
-          var value = channelCursor.getString(i);
-          channel[columns[i]] = value;
+        try {
+            for (let key of cursor.getColumnNames()) {
+                let idx = channelCursor.getColumnIndex(key)
+                let type = channelCursor.getType(idx)
+
+                if (!type) {
+                    channel[key] = null;
+                } else if (type == 1 || type == 2) {
+                    channel[key] = Number(channelCursor.getString(idx));
+                } else if (type == 3) {
+                    channel[key] = channelCursor.getString(idx);
+                } else if (type == 4) {
+                    channel[key] = channelCursor.getBlob(idx);
+                }
+            }
+        } catch (err) {
+            channelCursor.close();
+            throw new channelError("caught UnException Error while create channel Object:\n  - " + err);
         }
-  
-      } catch (err) {
-        throw new channelError("caught UnException Error while create channel Object:\n  - " + err);
-      }
-    }else throw new channelError("cannot find channel with this chatId: " + chatId);
-    channel = AutoParse
+    } else {
+        channelCursor.close();
+        throw new channelError("cannot find channel with this chatId: " + chatId);
+    }
+    channelCursor.close();
+    channel = AutoParse(channel);
 
     let channelEncryptKey = ['last_message'];
     channelEncryptKey.forEach(key => {
-        channel[key] = decrypt(botID, 31, channel[key]);
+        if (channel[key]) try {
+            channel[key] = decrypt(botID, 31, channel[key]);
+        } catch (err) { }
     });
-    
+
     switch (channel.type) {
         case "OM": {
             let openLinkCursor = db2.rawQuery("SELECT * FROM open_link WHERE id = ? LIMIT 1", [channel['link_id']]);
             let openLink = {};
 
-            if(openLinkCursor.moveToFirst()) {
-                try{
+            if (openLinkCursor.moveToFirst()) {
+                try {
                     var columns = openLinkCursor.columnNames;
                     for (var i = 0; i < columns.length; i++) {
                         var value = openLinkCursor.getString(i);
                         openLink[columns[i]] = value;
                     }
-                
-                }catch (err) {
+
+                } catch (err) {
                     throw new channelError("caught UnException Error while create channel Object:\n  - " + err);
                 }
-            }else throw new channelError("cannot find openChat with this linkId: " + channel['link_id']);
+            } else throw new channelError("cannot find openChat with this linkId: " + channel['link_id']);
             channel.openLink = (JSON.stringify(openLink) == '{}' ? null : openLink);
             channel.name = openLink.name;
+            openLinkCursor.close();
             break;
         }
         default: {
-            if(typeof channel.meta == 'object' && channel.meta[0]) channel.name = channel.meta[0].content;
+            if (typeof channel.meta == 'object' && channel.meta[0]) channel.name = channel.meta[0].content;
             else channel.name = null;
             break;
         }
