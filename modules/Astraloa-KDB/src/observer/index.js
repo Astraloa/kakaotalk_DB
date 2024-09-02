@@ -3,7 +3,7 @@ module.exports = /** @class */ (function () {
     /**
      * set observer
      * 
-     * callback - (event, path || null)
+     * callback - (event, path || null);
      * 
      * @param {string} file_path 
      * @param {function} callback 

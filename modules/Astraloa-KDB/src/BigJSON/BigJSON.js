@@ -1,15 +1,15 @@
 'use strict'
-Object.defineProperty(exports, '__esModule', { value: true })
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.BigJSON = void 0
 var BigJSON,
-    BIG = require('./lossless-json')
+    BIG = require('./lossless-json');
 !(function (z) {
     function O(I, d) {
         if ('object' == typeof d && d && 'isLosslessNumber' in d) {
             try {
-                return d.valueOf()
+                return d.valueOf();
             } catch (t) {
-                return d.toString()
+                return d.toString();
             }
         }
         return d
@@ -20,15 +20,15 @@ var BigJSON,
             m < Number(c.length());
             m++
         ) {
-            var U = String(c.getString(m))
-            d.push(U)
+            var U = String(c.getString(m));
+            d.push(U);
         }
         return d
     }
     z.parse = function (I) {
-        return BIG.parse(I, O)
+        return BIG.parse(I, O);
     }
     z.stringify = function (I) {
-        return BIG.stringify(I)
+        return BIG.stringify(I);
     }
 })(BigJSON || (exports.BigJSON = BigJSON = {}))

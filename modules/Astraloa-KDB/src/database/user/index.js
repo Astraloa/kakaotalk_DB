@@ -9,8 +9,8 @@ function getUser(userId, botID) {
     if (userCursor.moveToFirst()) {
         try {
             for (let key of cursor.getColumnNames()) {
-                let idx = userCursor.getColumnIndex(key)
-                let type = userCursor.getType(idx)
+                let idx = userCursor.getColumnIndex(key);
+                let type = userCursor.getType(idx);
 
                 if (!type) {
                     user[key] = null;

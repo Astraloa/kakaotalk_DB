@@ -14,8 +14,8 @@ function getChannel(chatId, botID) {
     if (channelCursor.moveToFirst()) {
         try {
             for (let key of cursor.getColumnNames()) {
-                let idx = channelCursor.getColumnIndex(key)
-                let type = channelCursor.getType(idx)
+                let idx = channelCursor.getColumnIndex(key);
+                let type = channelCursor.getType(idx);
 
                 if (!type) {
                     channel[key] = null;
