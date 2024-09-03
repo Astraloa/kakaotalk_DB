@@ -1,6 +1,6 @@
 Deep Dark License - Type B
 
-Copyright `2024` `command0929`, All rights reserved.
+Copyright `2024` `Astraloa`, All rights reserved.
 
 1. To use a work including software that the `Deep Dark License` has been applied, retaining the above copyright notice, this list of conditions and the following notice, the contents of the `Deep Dark License` must be distributed together.
 
