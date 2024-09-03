@@ -18,7 +18,7 @@ module.exports = /** @class */ (function () {
     DatabaseChat.prototype.getJSON = function () {
         DB.refresh();
         if(this.data.event == "chat") {
-            return this.getChatById();
+            return this.getChatById(this.botID);
         }
     }
 

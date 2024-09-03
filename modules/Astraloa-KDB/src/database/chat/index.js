@@ -55,11 +55,11 @@ function getChatById(botID, logId) {
     }
 
     if (chat.chat_id) {
-        chat.channel = getChannelById(chat.chat_id);
+        chat.channel = getChannelById(chat.chat_id, botID);
         delete chat.chat_id;
     }
     if (chat.user_id) {
-        chat.user = getUserById(chat.user_id);
+        chat.user = getUserById(chat.user_id, botID);
         delete chat.user_id;
     }
 
