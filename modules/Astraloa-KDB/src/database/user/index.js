@@ -3,7 +3,7 @@ let AutoParse = require("../../AutoParse");
 let decrypt = require("./../../decrypt");
 var DB = require("../Astraloa");
 
-function getUser(userId, botID) {
+function getUserById(userId, botID) {
     let db2 = DB.getDB2();
     let userCursor = db2.rawQuery("SELECT * FROM friends WHERE id=? ORDER BY _id LIMIT 1", [userId]);
     if (userCursor.moveToFirst()) {
@@ -40,4 +40,4 @@ function getUser(userId, botID) {
     return user;
 }
 
-module.exports = getUser;
+module.exports = getUserById;
