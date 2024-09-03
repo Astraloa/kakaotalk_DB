@@ -39,3 +39,5 @@ function getUser(userId, botID) {
     user = AutoParse(user);
     return user;
 }
+
+module.exports = getUser;

@@ -1,17 +1,9 @@
-let db;
-let db2;
+let Astraloa = require("./main");
 
-let { SQLiteDatabase } = android.database.sqlite;
-
-function open(dbDir) {
-    dbDir = dbDir || "/data/data/com.kakao.talk/databases/";
-    db = SQLiteDatabase.openDatabase(dbDir + "KakaoTalk.db", null, 0);
-    db2 = SQLiteDatabase.openDatabase(dbDir + "KakaoTalk2.db", null, 0);
+function refresh() {
+    Astraloa.refresh();
 }
 
-module.exports = {
-    refresh: open,
-    getDB1: () => db,
-    getDB2: () => db2,
-    getDBs: () => [db, db2]
-}
+module.exports = Object.assign(Astraloa, {
+    refresh: refresh
+});

@@ -75,3 +75,5 @@ function getChannel(chatId, botID) {
     }
     return channel;
 }
+
+module.exports = getChannel;

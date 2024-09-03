@@ -8,9 +8,9 @@ let getUserById = require("./../user");
 
 /** Need Convert To KakaoTalk Class + prev/next chat */
 
-module.exports = function (botID) {
+function getChatById(botID, logId) {
     let db = DB.getDB1();
-    let chatCursor = db.rawQuery("SELECT * FROM chat_logs ORDER BY created_at DESC LIMIT 1", null);
+    let chatCursor = logId ? db.rawQuery("SELECT * FROM chat_logs WHERE id = ? LIMIT 1", [logId]) : db.rawQuery("SELECT * FROM chat_logs ORDER BY created_at DESC LIMIT 1", null);
     if (chatCursor.moveToFirst()) {
         try {
             for (let key of cursor.getColumnNames()) {
@@ -43,15 +43,27 @@ module.exports = function (botID) {
         } catch (err) { }
     });
     chat = AutoParse(chat);
-    
-    if(chat.chat_id) {
+    chat.isReply = () => {
+        return false;
+    }
+
+    if (chat.attachment) if (chat.attachment['src_logId']) {
+        chat.isReply = () => {
+            return true;
+        };
+        chat.source = getChatById(botID, chat.attachment['src_logId']);
+    }
+
+    if (chat.chat_id) {
         chat.channel = getChannelById(chat.chat_id);
         delete chat.chat_id;
     }
-    if(chat.user_id) {
+    if (chat.user_id) {
         chat.user = getUserById(chat.user_id);
         delete chat.user_id;
     }
 
     return chat;
 }
+
+module.exports = getChatById;
