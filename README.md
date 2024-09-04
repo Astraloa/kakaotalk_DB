@@ -9,7 +9,9 @@
 > * [x] get userId by code
 > * [x] check change kakaotalk db
 > * [x] convert database value
-> * [ ] create kakaoTalk DB class
+> * [x] create kakaoTalk DB class
 > * [x] create next/prev chat
 > * [x] sepreate data file
+> * [x] sepreate feed type events
+> * [ ] sepreate events
 > * [x] devloping..
