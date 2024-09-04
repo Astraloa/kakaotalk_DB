@@ -12,6 +12,4 @@
 > * [x] create kakaoTalk DB class
 > * [x] create next/prev chat
 > * [x] sepreate data file
-> * [x] sepreate feed type events
-> * [ ] sepreate events
 > * [x] devloping..
