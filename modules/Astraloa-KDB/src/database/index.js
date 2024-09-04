@@ -1,6 +1,5 @@
 module.exports = /** @class */ (function () {
     let DB = require("./Astraloa");
-    let supportEvent = ["chat"];
 
     function DatabaseChat (event) {
         DB.refresh();
@@ -8,20 +7,15 @@ module.exports = /** @class */ (function () {
         this.botID = require("./getUserId")(db2);
         this.data = {
             event: event
-        } // chat, profile_modify
+        } // chat, modify_profile
     }
 
-    DatabaseChat.prototype.getChannelById = require("./channel");
-    DatabaseChat.prototype.getUserById = require("./user");
+    DatabaseChat.prototype.getChannelById = (chatId) => require("./channel")(chatId, this.botID);
+    DatabaseChat.prototype.getUserById = (userId) => require("./user")(userId, this.botID);
     DatabaseChat.prototype.getChatById = require("./chat");
     DatabaseChat.prototype.getJSON = function () {
-        if(!supportEvent.includes(this.data.event)) return Object.create({
-            message: "Not Support Event"
-        });
         DB.refresh();
-        if(this.data.event == "chat") {
             return Object.create(this.getChatById(this.botID));
-        }
     }
 
     return DatabaseChat;

@@ -47,6 +47,16 @@ function getChat(botID, logId) {
     Object.keys(chatData).forEach(key => {
         this[key] = chatData[key];
     });
+    
+    this.isFeed = () => {
+        return false;
+    }
+    
+    if(this.type == 0) {
+        this.isFeed = () => {
+            return true;
+        }
+    }
 
     this.isReply = () => {
         return false;

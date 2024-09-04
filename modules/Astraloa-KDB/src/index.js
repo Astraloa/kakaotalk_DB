@@ -1,23 +1,62 @@
-let events = {};
-let Observer = require("./observer");
-let DatabaseWatcher;
-
-let chatDB = require("./database");
-let prevId;
+let events = {},
+    Observer = require("./observer"),
+    DatabaseWatcher,
+    chatDB = require("./database"),
+    prevId,
+    KDB = () => {
+        let data = new chatDB('message').getJSON();
+        if (data.id == prevId) return;
+        prevId = data.id;
+        switch (data.v.origin) {
+            case "MSG":
+            case "CHATINFO": {
+                events['message'](data);
+                break;
+            }
+            case "WRITE": {
+                react && events['message'](data);
+                break;
+            }
+            case "NEWMEM": {
+                data.isFeed() & data.message.feedType == 1 ? events['invite'](data) : events['join'](data);
+                break;
+            }
+            case "DELMEM": {
+                data.isFeed() & data.message.feedType == 6 ? events['kick'](data) : data.message.feedType == 2 & events['leave'](data);
+                break;
+            }
+            case 'SYNCDLMSG': {
+                events['delete'](data);
+                break;
+            }
+            case 'SYNCREWR': {
+                events['hide'](data);
+                break;
+            }
+            case 'SYNCMEMT': {
+                events['member_type_change'](data);
+            }
+        }
+    };
 
 module.exports = function (packageName, react) {
     function on(event, callback) {
+        if (DatabaseWatcher) return;
         events[event] = callback;
     }
 
     function start() {
-        DatabaseWatcher = new Observer("/data/data/" + packageName + "/databases/KakaoTalk.db", () => {
-            let data = new chatDB('chat').getJSON();
-            if (data.id == prevId) return;
-            prevId = data.id;
-            if(!react && data.v.isMine) return;
-            events['chat'](data);
-        });
+        DatabaseWatcher = new Observer("/data/data/" + packageName + "/databases/KakaoTalk.db", KDB);
+        events = Object.assign({
+            message: () => { },
+            invite: () => { },
+            join: () => { },
+            kick: () => { },
+            leave: () => { },
+            delete: () => { },
+            hide: () => { },
+            member_type_change: () => { },
+        }, events);
         return DatabaseWatcher.start();
     }
 

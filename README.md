@@ -10,6 +10,6 @@
 > * [x] check change kakaotalk db
 > * [x] convert database value
 > * [ ] create kakaoTalk DB class
-> * [ ] create next/prev chat
+> * [x] create next/prev chat
 > * [x] sepreate data file
 > * [x] devloping..
