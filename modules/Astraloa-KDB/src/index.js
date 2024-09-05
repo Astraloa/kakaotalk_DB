@@ -7,35 +7,39 @@ let events = {},
         let data = new chatDB('message').getJSON();
         if (data.id == prevId) return;
         prevId = data.id;
-        switch (data.v.origin) {
-            case "MSG":
-            case "CHATINFO": {
-                events['message'](data);
-                break;
+        try {
+            switch (data.v.origin) {
+                case "MSG":
+                case "CHATINFO": {
+                    events['message'](data);
+                    break;
+                }
+                case "WRITE": {
+                    react && events['message'](data);
+                    break;
+                }
+                case "NEWMEM": {
+                    data.isFeed() & data.message.feedType == 1 ? events['invite'](data) : events['join'](data);
+                    break;
+                }
+                case "DELMEM": {
+                    data.isFeed() & data.message.feedType == 6 ? events['kick'](data) : data.message.feedType == 2 & events['leave'](data);
+                    break;
+                }
+                case 'SYNCDLMSG': {
+                    events['delete'](data);
+                    break;
+                }
+                case 'SYNCREWR': {
+                    events['hide'](data);
+                    break;
+                }
+                case 'SYNCMEMT': {
+                    events['member_type_change'](data);
+                }
             }
-            case "WRITE": {
-                react && events['message'](data);
-                break;
-            }
-            case "NEWMEM": {
-                data.isFeed() & data.message.feedType == 1 ? events['invite'](data) : events['join'](data);
-                break;
-            }
-            case "DELMEM": {
-                data.isFeed() & data.message.feedType == 6 ? events['kick'](data) : data.message.feedType == 2 & events['leave'](data);
-                break;
-            }
-            case 'SYNCDLMSG': {
-                events['delete'](data);
-                break;
-            }
-            case 'SYNCREWR': {
-                events['hide'](data);
-                break;
-            }
-            case 'SYNCMEMT': {
-                events['member_type_change'](data);
-            }
+        } catch (err) {
+            (this.console ? console.log : Log.error)((err + "\n" + (err.stack || "")).slice(0, -1))
         }
     };
 
