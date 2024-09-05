@@ -3,7 +3,8 @@ let events = {},
     DatabaseWatcher,
     chatDB = require("./database"),
     prevId,
-    KDB = () => {
+    KDB = (event) => {
+        if(android.os.FileObserver.MODIFY != event) return;
         let data = new chatDB('message').getJSON();
         if (data.id == prevId) return;
         prevId = data.id;
