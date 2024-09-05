@@ -1,4 +1,5 @@
 let reactTime = Date.now();
+let Promise = require("../Promise");
 
 module.exports = /** @class */ (function () {
 
@@ -19,7 +20,7 @@ module.exports = /** @class */ (function () {
                 let nowTime = Date.now();
                 if(reactTime - 2 <= nowTime && nowTime <= reactTime + 2) return;
                 reactTime = Date.now();
-                this.callback(event, path);
+                Promise(() => this.callback(event, path));
             }
         }, new java.io.File(this.path));
     }
