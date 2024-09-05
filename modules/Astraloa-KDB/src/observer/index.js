@@ -1,3 +1,5 @@
+let reactTime = Date.now();
+
 module.exports = /** @class */ (function () {
 
     /**
@@ -13,7 +15,12 @@ module.exports = /** @class */ (function () {
         this.path = file_path;
         this.callback = callback;
         this.observer = new JavaAdapter(android.os.FileObserver, {
-            onEvent: this.callback
+            onEvent: (event, path) => {
+                let nowTime = Date.now();
+                if(reactTime - 2 <= nowTime && nowTime <= reactTime + 2) return;
+                reactTime = Date.now();
+                this.callback(event, path);
+            }
         }, new java.io.File(this.path));
     }
 
