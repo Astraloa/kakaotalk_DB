@@ -11,4 +11,4 @@ function getInstance(config) {
     return Listener(packageName, reactByMine);
 }
 
-module.exports = getInstance;
+exports['getInstance'] = getInstance;
