@@ -3,11 +3,11 @@ let events = {},
     DatabaseWatcher,
     chatDB = require("./database"),
     prevId,
-    KDB = (event) => {
-        if(android.os.FileObserver.MODIFY != event) return;
+    KDB = () => {
+        let S = new chatDB('message').getChatStacks();
+        if (S == prevId) return;
+        prevId = S;
         let data = new chatDB('message').getJSON();
-        if (data.id == prevId) return;
-        prevId = data.id;
         try {
             switch (data.v.origin) {
                 case "MSG":

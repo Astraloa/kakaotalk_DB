@@ -1,4 +1,3 @@
-let reactTime = Date.now();
 let Promise = require("../Promise");
 
 module.exports = /** @class */ (function () {
@@ -17,10 +16,8 @@ module.exports = /** @class */ (function () {
         this.callback = callback;
         this.observer = new JavaAdapter(android.os.FileObserver, {
             onEvent: (event, path) => {
-                let nowTime = Date.now();
-                if(reactTime - 2 <= nowTime && nowTime <= reactTime + 2) return;
-                reactTime = Date.now();
-                Promise(() => this.callback(event, path));
+                if(android.os.FileObserver.MODIFY != event) return;
+                new Promise(() => this.callback(event, path));
             }
         }, new java.io.File(this.path));
     }

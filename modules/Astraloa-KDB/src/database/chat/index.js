@@ -134,5 +134,14 @@ getChat.prototype.getMaxNextCount = function () {
 }
 
 module.exports = (botID, logId) => {
+    if(typeof logId == 'object' && logId instanceof Object) {
+        let db = DB.getDB1(),
+        stacksCursor = db.rawQuery("SELECT id FROM chat_logs ORDER BY created_at DESC LIMIT 1", []),
+        logId = stacksCursor.moveToFirst() && stacksCursor.getString(0);
+        return (
+            stacksCursor.close(),
+            logId
+        );
+    }
     return new getChat(botID, logId);
 };

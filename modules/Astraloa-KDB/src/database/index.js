@@ -13,6 +13,7 @@ module.exports = /** @class */ (function () {
     DatabaseChat.prototype.getChannelById = (chatId) => require("./channel")(chatId, this.botID);
     DatabaseChat.prototype.getUserById = (userId) => require("./user")(userId, this.botID);
     DatabaseChat.prototype.getChatById = require("./chat");
+    DatabaseChat.prototype.getChatStacks = () => DB.refresh(), this.getChatById(this.botID, {});
     DatabaseChat.prototype.getJSON = function () {
         DB.refresh();
             return Object.create(this.getChatById(this.botID));
