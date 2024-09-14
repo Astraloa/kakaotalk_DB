@@ -3,11 +3,14 @@ let AutoParse = require("../../AutoParse");
 let decrypt = require("./../../decrypt");
 var DB = require("../Astraloa");
 
+let openLinkTable = ["id", "user_id", "token", "name", "url", "image_url", "type", "member_limit", "direct_chat_limit", "active", "expired", "created_at", "view_type", "push_alert", "icon_url", "v", "searchable", "description"];
+let channelTable = ["_id", "id", "type", "members", "active_member_ids", "last_log_id", "last_message", "last_updated_at", "unread_count", "watermarks", "temporary_message", "v", "ext", "last_read_log_id", "last_update_seen_id", "active_members_count", "meta", "is_hint", "private_meta", "last_chat_log_type", "schat_token", "last_skey_token", "last_pk_tokens", "link_id", "moim_meta", "invite_info", "blinded_member_ids", "mute_until_at", "last_joined_log_id"];
+
 function getChannel(chatId, botID) {
     let dbs = DB.getDBs();
     let db = dbs[0];
     let db2 = dbs[1];
-    let channelCursor = db.rawQuery("SELECT * FROM chat_rooms WHERE id = ? ORDER BY last_updated_at DESC LIMIT 1", [chatId]);
+    let channelCursor = db.rawQuery("SELECT " + channelTable.join(",") + " FROM chat_rooms WHERE id = ? ORDER BY last_updated_at DESC LIMIT 1", [chatId]);
 
     let channel = {};
 
@@ -47,7 +50,7 @@ function getChannel(chatId, botID) {
 
     switch (channel.type) {
         case "OM": {
-            let openLinkCursor = db2.rawQuery("SELECT * FROM open_link WHERE id = ? LIMIT 1", [channel['link_id']]);
+            let openLinkCursor = db2.rawQuery("SELECT " + openLinkTable.join(",") + " FROM open_link WHERE id = ? LIMIT 1", [channel['link_id']]);
             let openLink = {};
 
             if (openLinkCursor.moveToFirst()) {

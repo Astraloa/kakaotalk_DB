@@ -6,12 +6,13 @@ var DB = require("../Astraloa");
 let getChannelById = require("./../channel");
 let getUserById = require("./../user");
 
+let chatTable = ["_id", "id", "type", "chat_id", "user_id", "message", "attachment", "created_at", "deleted_at", "client_message_id", "prev_id", "referer", "supplement", "v"];
 let botId;
 
 function getChat(botID, logId) {
     botId = botID; // get next/prev 에 쓰일 botId 저장용
     let db = DB.getDB1();
-    let chatCursor = logId ? db.rawQuery("SELECT * FROM chat_logs WHERE id = ? LIMIT 1", [logId]) : db.rawQuery("SELECT * FROM chat_logs ORDER BY created_at DESC LIMIT 1", null);
+    let chatCursor = logId ? db.rawQuery("SELECT " + chatTable.join(",") + " FROM chat_logs WHERE id = ? LIMIT 1", [logId]) : db.rawQuery("SELECT * FROM chat_logs ORDER BY created_at DESC LIMIT 1", null);
     if (chatCursor.moveToFirst()) {
         try {
             for (let key of cursor.getColumnNames()) {
