@@ -15,7 +15,7 @@ function getChat(botID, logId) {
     let chatCursor = logId ? db.rawQuery("SELECT " + chatTable.join(",") + " FROM chat_logs WHERE id = ? LIMIT 1", [logId]) : db.rawQuery("SELECT * FROM chat_logs ORDER BY created_at DESC LIMIT 1", null);
     if (chatCursor.moveToFirst()) {
         try {
-            for (let key of cursor.getColumnNames()) {
+            for (let key of chatCursor.getColumnNames()) {
                 let idx = chatCursor.getColumnIndex(key);
                 let type = chatCursor.getType(idx);
 
