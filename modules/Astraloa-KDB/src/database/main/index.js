@@ -9,9 +9,6 @@ function open(dbDir) {
     db2 = SQLiteDatabase.openDatabase(dbDir + "KakaoTalk2.db", null, android.database.sqlite.SQLiteDatabase.CREATE_IF_NECESSARY | android.database.sqlite.SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
 }
 
-module.exports = {
-    refresh: open,
-    getDB1: () => db,
-    getDB2: () => db2,
-    getDBs: () => [db, db2]
+module.exports = function () {
+    return open(), [db, db2];
 }

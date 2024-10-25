@@ -1,24 +1,21 @@
 module.exports = /** @class */ (function () {
-    let DB = require("./Astraloa");
+    let DB = require("./main");
 
-    function DatabaseChat (event) {
-        DB.refresh();
-        let db2 = DB.getDB2();
-        this.botID = require("./getUserId")(db2);
+    function DatabaseChat(event) {
+        this.botID = require("./getUserId")(DB()[1]);
         this.data = {
             event: event
         } // chat, modify_profile
     }
 
-    DatabaseChat.prototype.getChannelById = (chatId) => require("./channel")(chatId, this.botID);
-    DatabaseChat.prototype.getUserById = (userId) => require("./user")(userId, this.botID);
-    DatabaseChat.prototype.getChatById = require("./chat");
+    DatabaseChat.prototype.getChannelById = (chatId) => require("./channel")(DB(), chatId, this.botID);
+    DatabaseChat.prototype.getUserById = (userId) => require("./user")(DB(), userId, this.botID);
+    DatabaseChat.prototype.getChatById = (logId) => require("./chat")(DB(), this.botID, logId);
     DatabaseChat.prototype.getChatStacks = () => {
-        return DB.refresh(), this.getChatById(this.botID, {});
+        return this.getChatById({});
     };
     DatabaseChat.prototype.getJSON = function () {
-        DB.refresh();
-            return Object.create(this.getChatById(this.botID));
+        return Object.create(this.getChatById());
     }
 
     return DatabaseChat;

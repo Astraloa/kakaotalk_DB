@@ -1,17 +1,18 @@
 let chatError = require("./../../error")("chatError");
 let AutoParse = require("../../AutoParse");
 let decrypt = require("./../../decrypt");
-var DB = require("../Astraloa");
 
 let getChannelById = require("./../channel");
 let getUserById = require("./../user");
 
 let chatTable = ["_id", "id", "type", "chat_id", "user_id", "message", "attachment", "created_at", "deleted_at", "client_message_id", "prev_id", "referer", "supplement", "v"];
 let botId;
+let dbs;
 
-function getChat(botID, logId) {
-    botId = botID; // get next/prev 에 쓰일 botId 저장용
-    let db = DB.getDB1();
+function getChat(dbs, botID, logId) {
+    botId = botID;
+    dbs = dbs;
+    let db = dbs[0];
     let chatCursor = logId ? db.rawQuery("SELECT " + chatTable.join(",") + " FROM chat_logs WHERE id = ? LIMIT 1", [logId]) : db.rawQuery("SELECT * FROM chat_logs ORDER BY created_at DESC LIMIT 1", null);
     if (chatCursor.moveToFirst()) {
         try {
@@ -64,11 +65,11 @@ function getChat(botID, logId) {
     }
 
     if (this.chat_id) {
-        this.channel = getChannelById(this.chat_id, botID);
+        this.channel = getChannelById(dbs, this.chat_id, botID);
         delete this.chat_id;
     }
     if (this.user_id) {
-        this.user = getUserById(this.user_id, botID);
+        this.user = getUserById(dbs, this.user_id, botID);
         delete this.user_id;
     }
 
@@ -76,7 +77,7 @@ function getChat(botID, logId) {
         this.isReply = () => {
             return true;
         };
-        this.source = new getChat(botID, chat.attachment['src_logId']);
+        this.source = new getChat(dbs, botID, chat.attachment['src_logId']);
     }
 }
 
@@ -85,7 +86,7 @@ getChat.prototype.getPrevChat = function (n) {
     const chatId = this.channel.id;
     const currentId = this['_id'];
 
-    let prevCursor = db.rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id <= ? ORDER BY _id DESC", [chatId, currentId]);
+    let prevCursor = dbs[0].rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id <= ? ORDER BY _id DESC", [chatId, currentId]);
 
     if (!prevCursor.moveToFirst()) throw new chatError("Cannot find Chat Log!");
 
@@ -93,7 +94,7 @@ getChat.prototype.getPrevChat = function (n) {
     let prevId = prevCursor.getString(1);
     prevCursor.close();
 
-    return new getChat(botId, prevId);
+    return new getChat(dbs, botId, prevId);
 };
 
 getChat.prototype.getNextChat = function (n) {
@@ -101,7 +102,7 @@ getChat.prototype.getNextChat = function (n) {
     const chatId = this.channel.id;
     const currentId = this['_id'];
 
-    let nextCursor = db.rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id >= ? ORDER BY _id DESC", [chatId, currentId]);
+    let nextCursor = dbs[0].rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id >= ? ORDER BY _id DESC", [chatId, currentId]);
 
     if (!nextCursor.moveToFirst()) throw new chatError("Cannot find Chat Log!");
 
@@ -109,14 +110,14 @@ getChat.prototype.getNextChat = function (n) {
     let nextId = nextCursor.getString(1);
     nextCursor.close();
 
-    return dbGet(botId, nextId);
+    return new getChat(dbs, botId, nextId);
 };
 
 getChat.prototype.getMaxPrevCount = function () {
     const chatId = this.channel.id;
     const currentId = this['_id'];
 
-    let prevCursor = db.rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id <= ? ORDER BY _id DESC", [chatId, currentId]);
+    let prevCursor = dbs[0].rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id <= ? ORDER BY _id DESC", [chatId, currentId]);
 
     if (!prevCursor.moveToFirst()) throw new RangeError("Cannot find Chat Log!");
     let count = prevCursor.getCount() - 1;
@@ -127,16 +128,16 @@ getChat.prototype.getMaxNextCount = function () {
     const chatId = this.channel.id;
     const currentId = this['_id'];
 
-    let nextCursor = db.rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id >= ? ORDER BY _id DESC", [chatId, currentId]);
+    let nextCursor = dbs[0].rawQuery("SELECT _id, id FROM chat_logs WHERE chat_id = ? AND _id >= ? ORDER BY _id DESC", [chatId, currentId]);
 
     if (!nextCursor.moveToFirst()) throw new chatError("Cannot find Chat Log!");
     let count = nextCursor.getCount() - 1;
     return nextCursor.close(), count;
 }
 
-module.exports = (botID, logId) => {
+module.exports = (dbs, botID, logId) => {
     if(typeof logId == 'object' && logId instanceof Object) {
-        let db = DB.getDB1(),
+        let db = dbs[0],
         stacksCursor = db.rawQuery("SELECT id FROM chat_logs ORDER BY created_at DESC LIMIT 1", []),
         logId = stacksCursor.moveToFirst() && stacksCursor.getString(0);
         return (
@@ -144,5 +145,5 @@ module.exports = (botID, logId) => {
             logId
         );
     }
-    return new getChat(botID, logId);
+    return new getChat(dbs, botID, logId);
 };
