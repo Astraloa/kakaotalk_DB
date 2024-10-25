@@ -12,5 +12,4 @@
 > * [x] create kakaoTalk DB class
 > * [x] create next/prev chat
 > * [x] sepreate data file
-> * [ ] devloping..
-> * [ ] Fix Memory OverFlow
+> * [x] devloping..
