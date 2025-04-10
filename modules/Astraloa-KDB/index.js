@@ -1,4 +1,4 @@
-let Listener = require("./src/index");
+let Manager = require("./src/index");
 
 function getInstance(config) {
     config = config || {};
@@ -8,7 +8,7 @@ function getInstance(config) {
         .exec(['su', '-c', 'chmod -R 777 /data/data/' + packageName])
         .waitFor();
 
-    return Listener(packageName, reactByMine);
+    return Manager.create(packageName, reactByMine);
 }
 
 exports['getInstance'] = getInstance;

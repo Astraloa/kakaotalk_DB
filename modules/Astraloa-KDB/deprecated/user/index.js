@@ -1,6 +1,6 @@
 let userError = require("./../../error")("userError");
 let AutoParse = require("../../AutoParse");
-let decrypt = require("./../../decrypt");
+let decrypt = require("../../decrypt");
 
 let userTable = ["_id", "contact_id", "id", "type", "uuid", "phone_number", "raw_phone_number", "name", "phonetic_name", "profile_image_url", "full_profile_image_url", "original_profile_image_url", "status_message", "chat_id", "brand_new", "blocked", "favorite", "position", "v", "board_v", "ext", "nick_name", "user_type", "story_user_id", "account_id", "linked_services", "hidden", "purged", "suspended", "member_type", "involved_chat_ids", "contact_name", "enc", "created_at", "new_badge_updated_at", "new_badge_seen_at", "status_action_token", "access_permit"];
 
