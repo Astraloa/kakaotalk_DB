@@ -1,5 +1,3 @@
-let Promise = require("../Promise");
-
 module.exports = /** @class */ (function () {
 
     /**
@@ -17,7 +15,7 @@ module.exports = /** @class */ (function () {
         this.observer = new JavaAdapter(android.os.FileObserver, {
             onEvent: (event, path) => {
                 if(android.os.FileObserver.MODIFY != event) return;
-                new Promise(() => this.callback(event, path));
+                this.callback(path);
             }
         }, new java.io.File(this.path));
     }
