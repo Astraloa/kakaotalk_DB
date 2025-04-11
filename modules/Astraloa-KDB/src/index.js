@@ -1,6 +1,6 @@
 module.exports = (function () {
     const Promise = require('./Promise');
-    const Chat = require('./manager');
+    const Chat = require('./manager/chat-session');
     const myuserId = require('./manager/getUserId');
     const observer = require('./observer');
 
