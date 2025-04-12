@@ -83,8 +83,16 @@ module.exports = (function () {
         } while (cursor.moveToNext());
         return cursor.close(), chats_1;
     }
+    KDB.prototype.getLastID = function () {
+        var cursor = this.db.rawQuery('SELECT _id  FROM chat_logs ORDER BY _id DESC LIMIT 1', []);
+        if (cursor.moveToFirst()) {
+            var lastID = String(cursor.getString(0));
+            return cursor.close(), lastID;
+        }
+        cursor.close();
+    };
     KDB.prototype.start = function () {
-        return this.obs.stop(), this.obs.start();
+        return this.obs.stop(), this.lastID = this.getLastID(), this.obs.start();
     }
     KDB.prototype.stop = function () {
         return this.obs.stop();
