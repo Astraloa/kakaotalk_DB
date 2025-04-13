@@ -1,6 +1,8 @@
 module.exports = (function () {
     const BigJSON = require('../BigJSON');
     const decrypter =require('../decrypt');
+    const channelSession = require('./channel-session');
+    const userSession = require('./user-session');
     const chat_encrypted = ['message', 'attachment'];
     function chatSession(_raw, steam) {
         _raw.v = BigJSON.parse(_raw.v);
@@ -14,11 +16,22 @@ module.exports = (function () {
                 }
             }
         });
-        this._isHidden = false;
-        this._type = -1;
-        var type = _raw.type;
-        this._isHidden = this._type >= 16384;
-        this._type = 4294950911 & type;
+        Object.defineProperty(this, '_isHidden', {
+            value: _raw.type >= 16384,
+            enumerable: false
+        });
+        Object.defineProperty(this, '_type', {
+            value: 4294950911 & _raw.type,
+            enumerable: false
+        });
+        Object.defineProperty(this, '_user', {
+            value: userSession.create(_raw.user_id, _raw.chat_id, this),
+            enumerable: false
+        });
+        Object.defineProperty(this, '_channel', {
+            value: channelSession.create(_raw.chat_id, this),
+            enumerable: false
+        });
         Object.defineProperty(this, 'raw', {
             value: _raw,
             writable: false
@@ -73,6 +86,18 @@ module.exports = (function () {
                 );
             }
             return this.raw.attachment;
+        },
+        enumerable: true
+    });
+    Object.defineProperty(chatSession.prototype, 'user', {
+        get: function () {
+            return this._user;
+        },
+        enumerable: true
+    });
+    Object.defineProperty(chatSession.prototype, 'channel', {
+        get: function () {
+            return this._channel;
         },
         enumerable: true
     });
